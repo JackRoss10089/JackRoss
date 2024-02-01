@@ -1,0 +1,163 @@
+---
+title: "STA 202 Final Project"
+author: "Jack Ross"
+date: "2023-12-08"
+output: word_document
+---
+
+## Read in Data
+
+```{r}
+
+plays <- read.csv("Week6plays.csv")
+library(tidyverse)
+library(knitr)
+
+```
+
+B) The NFL Plays data set contains 50,147 observations and 372 total variables for all the plays that were ran during the 2022-2023 NFL Regular and Post Season
+The key variables I used for my analysis were down, rush.att, pass.att, posteam, ydstogo, yards_gained, qtr and play_type
+
+
+A) What is the strategical advantage of attempting an offensive play on fourth down to attempt to gain a first down?
+To answer this question, I want to investigate:
+What percentage of fourth downs were not punts or field goals in the 2022 NFL season?
+Who were the top 10 most effective teams in terms of "going for it" on fourth down last year?
+What was the average distance to go for a first down on all offensive fourth down plays last year?
+What was the frequency of "going for it" on fourth down relative to each quarter of the game?
+What was the team total success rate on attempted fourth down plays last season? 
+
+
+## Exploratory Data Analysis
+
+```{r}
+#Used this code to find total amount of times each individual team "went for it" on fourth down
+plays %>% 
+  filter(down == 4, play_type != "punt" & play_type != "field_goal" & play_type != "no_play") %>% 
+  group_by(posteam) %>% 
+  summarize(rush.att = sum(play_type == "run"), 
+            pass.att = sum(play_type == "pass"), 
+            total.plays = n()) %>% 
+  arrange(total.plays) %>% 
+  head(32)
+
+```
+
+```{r}
+#check the distribution of the variable of interest
+
+reg.plays <- plays %>% 
+  filter(down == 4, play_type != "punt" & play_type != "field_goal" & play_type != "no_play" & play_type != "qb_kneel") %>% 
+  mutate(success = ifelse(yards_gained >= ydstogo, 1, 0))
+
+hist(reg.plays$ydstogo)
+
+```
+
+
+```{r}
+#Used this code to see what proportion of total fourth down attempts teams "went for it" on fourth down last year, leaguewide statistic
+plays %>% 
+  filter(down == 4, play_type != "no_play") %>% 
+  summarize(rush.att = sum(play_type == "run"), 
+            pass.att = sum(play_type == "pass"), 
+            punt.att = sum(play_type == "punt"),
+            fg.att = sum(play_type == "field_goal"),
+            total.plays = n(),
+            goforit.prop = ((rush.att + pass.att)/(punt.att + fg.att))) 
+
+```
+
+```{r}
+#Average distance to go for first down for teams last season
+
+plays %>% 
+  filter(down == 4, play_type != "punt" & play_type != "field_goal" & play_type != "no_play") %>% 
+  summarize(avg.dist = mean(ydstogo),
+            std.dist = sd(ydstogo))
+
+
+```
+
+
+```{r}
+#Used this code to find proportion of successful fourth down attempts for each team
+#Created new "success" variable with mutate function, used a success as getting the first down on fourth down
+
+plays %>% 
+  filter(down == 4, play_type != "punt" & play_type != "field_goal" & play_type != "no_play") %>% 
+  mutate(success = ifelse(yards_gained >= ydstogo, 1, 0)) %>% 
+  group_by(posteam) %>% 
+  summarize(tot.success = sum(success),
+            total.plays = n(),
+            prop.success = sum(success)/total.plays) %>% 
+  arrange(prop.success) %>% 
+  head(32)
+
+```
+
+```{r}
+#Used this code to find the frequency of going for it relative to what quarter the game is in
+
+q1 <- plays %>% 
+  filter(down == 4, qtr == 1, play_type != "punt" & play_type != "field_goal" & play_type != "no_play") %>% 
+  summarize(Q1.goforit = n())
+
+q2 <- plays %>% 
+  filter(down == 4, qtr == 2, play_type != "punt" & play_type != "field_goal" & play_type != "no_play") %>% 
+  summarize(Q2.goforit = n())  
+
+q3 <- plays %>% 
+  filter(down == 4, qtr == 3, play_type != "punt" & play_type != "field_goal" & play_type != "no_play") %>% 
+  summarize(Q3.goforit = n())
+
+q4 <- plays %>% 
+  filter(down == 4, qtr == 4, play_type != "punt" & play_type != "field_goal" & play_type != "no_play") %>% 
+  summarize(Q4.goforit = n())
+
+qtr.freq <- data.frame(q1, q2, q3, q4)
+qtr.freq
+```
+
+
+C) Logistic regression was used to predict the contribution to the likelihood of a successful fourth down play from variables that were viewed as practically significant to the outcome of a fourth down play
+Mean and standard deviation were used to analyze the ydstogo variable  
+Simple proportions were created within the R code used to analyze team’s success rates on fourth down
+
+```{r, results='hide'}
+#Had tp cpmvert these variables to factor but wanted to not show output so had to do a seperate chunk with different options
+as.factor(reg.plays$play_type)
+as.factor(reg.plays$qtr)
+```
+
+```{r}
+#Used this code to create logistic regression model for fourth down success likelihood
+
+reg.plays <- plays %>% 
+  filter(down == 4, play_type != "punt" & play_type != "field_goal" & play_type != "no_play" & play_type != "qb_kneel") %>% 
+  mutate(success = ifelse(yards_gained >= ydstogo, 1, 0)) 
+
+glm.fit <- glm(success ~ play_type + ydstogo + qtr,  family = "binomial", data = reg.plays)
+
+summary(glm.fit)
+
+```
+
+D) The result of the analysis of fourth down plays suggested that the Rams and the Chiefs were the two most successful teams when it came to "going for it"  on fourth down in the 2022-2023 NFL season. Teams also went for it about 23 percent of the time on fourth down last year. The average distance to go on a fourth down that was an offensive play last year was 3.96 yards. Also, the Browns went for it the most last season and the Saints went for it the least last season.
+
+E) One of the biggest challenges was effectively visualizing the output that was generated from the analysis
+Also, it was challenging at first to understand how to classify a successful fourth down within the data set
+
+F) The strategical advantage when going for it on fourth down is strongest when a team can confidently run the ball given the distance required for a first down
+Passing the ball on fourth down is substantially less effective than running the ball on fourth down
+This is a function of yards needed for a first down, as the lesser yards need for a possessing team to get a first down intuitively increases the likelihood of the first down being converted successfully
+The lesser yards needed also increases the chance of a running play, and this explains some of the inflated potency of running the ball on fourth down
+It is also important to note the intangible aspects of coaching a football game such as experience and overall situational awareness, this is best demonstrated by the Chiefs and the Rams having the highest fourth down success rates last year, as Andy Reid and Sean McVay are considered as two of the best coaches in the NFL
+
+G) In the future, I would like to further understand some of the dependent modeling techniques that can be used to better consider all the situational factors that build into a fourth down decision
+Also, it would be interesting to conduct the same analysis at the end of this current season with the data from this season to compare to last season
+
+
+
+
+
