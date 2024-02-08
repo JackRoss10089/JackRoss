@@ -1,0 +1,259 @@
+---
+title: "Time Series Analysis"
+author: "Jack Ross"
+date: '2023-05-04'
+output: html_document
+---
+
+```{=html}
+
+<style type="text/css">
+
+/* Cascading Style Sheets (CSS) is a stylesheet language used to describe the presentation of a document written in HTML or XML. it is a simple mechanism for adding style (e.g., fonts, colors, spacing) to Web documents. */
+
+h1.title {  /* Title - font specifications of the report title */
+  font-size: 24px;
+  color: DarkRed;
+  text-align: center;
+  font-family: "Gill Sans", sans-serif;
+}
+h4.author { /* Header 4 - font specifications for authors  */
+  font-size: 20px;
+  font-family: system-ui;
+  color: DarkRed;
+  text-align: center;
+}
+h4.date { /* Header 4 - font specifications for the date  */
+  font-size: 18px;
+  font-family: system-ui;
+  color: DarkBlue;
+  text-align: center;
+}
+h1 { /* Header 1 - font specifications for level 1 section title  */
+    font-size: 22px;
+    font-family: "Times New Roman", Times, serif;
+    color: navy;
+    text-align: center;
+}
+h2 { /* Header 2 - font specifications for level 2 section title */
+    font-size: 20px;
+    font-family: "Times New Roman", Times, serif;
+    color: navy;
+    text-align: left;
+}
+
+h3 { /* Header 3 - font specifications of level 3 section title  */
+    font-size: 18px;
+    font-family: "Times New Roman", Times, serif;
+    color: navy;
+    text-align: left;
+}
+
+h4 { /* Header 4 - font specifications of level 4 section title  */
+    font-size: 18px;
+    font-family: "Times New Roman", Times, serif;
+    color: darkred;
+    text-align: left;
+}
+
+body { background-color:white; }
+
+.highlightme { background-color:yellow; }
+
+p { background-color:white; }
+
+</style>
+```
+
+```{r setup, include=FALSE}
+# Detect, install and load packages if needed.
+if (!require("knitr")) {
+   install.packages("knitr")
+   library(knitr)
+}
+if (!require("leaflet")) {
+   install.packages("leaflet")
+   library(leaflet)
+}
+if (!require("EnvStats")) {
+   install.packages("EnvStats")
+   library(EnvStats)
+}
+if (!require("MASS")) {
+   install.packages("MASS")
+   library(MASS)
+}
+if (!require("phytools")) {
+   install.packages("phytools")
+   library(phytools)
+}
+if (!require("pander")) {
+   install.packages("pander")
+   library(pander)
+}
+if (!require("lubridate")) {
+   install.packages("lubridate")
+   library(lubridate)
+}
+if (!require("dplyr")) {
+   install.packages("dplyr")
+   library(dplyr)
+}
+if (!require("psych")) {
+   install.packages("psych")
+   library(psych)
+}
+if (!require("arules")) {
+   install.packages("arules")
+   library(arules)
+}
+if (!require("ISwR")) {
+   install.packages("ISwR")
+   library(ISwR)
+}
+if (!require("readxl")) {
+   install.packages("readxl")
+   library(ISwR)
+}
+if (!require("forecast")) {
+   install.packages("forecast")
+   library(ISwR)
+}
+#
+# specifications of outputs of code in code chunks
+knitr::opts_chunk$set(echo = FALSE,      # include code chunk in the output file
+                      warnings = FALSE,  # sometimes, you code may produce warning messages,
+                                         # you can choose to include the warning messages in
+                                         # the output file. 
+                      messages = FALSE,  #
+                      results = TRUE     # you can also decide whether to include the output
+                                         # in the output file.
+                      )  
+
+
+## Add ECHO = TRUE for submission and ECHO = FALSE for submission
+```
+
+## Introduction
+
+This case study examines a time series data set that observes the number of hours worked by the part-time and full-time labor force in the United States. The data set contains two variables, the date and the number of total hours worked in millions of hours. The observations in the data set are recorded annually and begin in 1948 and stop in 2021. This data set comes from the Federal Reserve Economic Data (FRED) and was uploaded to github for universal access.
+
+We will use the four baseline forecasting methods (Moving Average, Naive, Seasonal Naive, and Drift) on this time series data to test which model generates the most accurate forecast for this data. We will use Mean Absolute Prediction Error, Mean Absolute Deviation, and Mean Square Error in order to gauge which model generates the most accurate forecast. 
+
+## Exploratory Data Analysis
+
+After importing the data from GitHub, we next modify the data set to perform the time series analysis. We must first remove the date variable. We then define a training and testing portion of the data. We use the last ten periods for the testing data, and the previous 64 periods we use as the training data for the models. We choose to use the last ten values as the testing data to help avoid forecasting errors. 
+
+```{r}
+#Load data from github
+LaborHours <- read.csv("https://raw.githubusercontent.com/JackRoss10089/STA-321/main/HoursWorkedFRED.csv", header = TRUE)[,-1]
+
+## training and testing data: hold-up last ten years of data for calculating forecasting errors
+training = LaborHours[1:64]
+testing = LaborHours[65:74]
+##
+LaborHours.ts = ts(training, frequency = 1, start = c(1948, 1))
+```
+
+## Model Building Using Different Forecasting Methods
+
+Next we use the four baseline forecasting methods to forecast the next 5 year's (After 2021) data values.
+
+```{r}
+pred.mv = meanf(LaborHours.ts, h=15)$mean
+pred.naive = naive(LaborHours.ts, h=15)$mean
+pred.snaive = snaive(LaborHours.ts, h=15)$mean
+pred.rwf = rwf(LaborHours.ts, h=15, drift = TRUE)$mean
+###
+###
+pred.table = cbind( pred.mv = pred.mv,
+                    pred.naive = pred.naive,
+                    pred.snaive = pred.snaive,
+                    pred.rwf = pred.rwf)
+kable(pred.table, caption = "Forecasting Table")
+```
+
+After we generate the four different forecasting models, we next can visualize the output of these models. 
+
+## Visualization
+
+We now make a time series plot and the predicted values. Note that, the forecast values were based on the model that uses 64 historical data points in the time series. The following graph only shows observations #20 - #74 and the 15 forecasted values.
+
+```{r}
+plot(1:74,LaborHours[1:74], type="l", xlim=c(20, 75), 
+     xlab = "Years After 1948",
+     ylab = "Labor Hours Worked (Millions)",
+     main = "Annual Labor Hours Worked and Forecasting")
+points(1:74,  LaborHours[1:74],pch=20)
+##
+points(60:74, pred.mv, pch=15, col = "red")
+points(60:74, pred.naive, pch=16, col = "blue")
+points(60:74, pred.rwf, pch=18, col = "navy")
+points(60:74, pred.snaive, pch=17, col = "purple")
+##
+lines(60:74, pred.mv, lty=2, col = "red")
+lines(60:74, pred.snaive, lty=2, col = "purple")
+lines(60:74, pred.naive, lty=2, col = "blue")
+lines(60:74, pred.rwf, lty=2, col = "navy")
+## 
+legend("topleft", c("moving average", "naive", "drift", "seasonal naive"),
+       col=c("red", "blue", "navy", "purple"), pch=15:18, lty=rep(2,4),
+       bty="n", cex = 0.8)
+```
+
+After generating a visualization of our data, we next can test each model's performance metrics to see which model most accurately forecasts the future amount of labor hours worked.
+
+## Accuracy Metrics
+
+We will use the mean absolute prediction error (MAPE) to compare the performance of the four forecasting methods.
+
+
+```{r}
+true.value = LaborHours[65:74]
+PE.mv =  100*(true.value - pred.mv)/true.value
+PE.naive =  100*(true.value - pred.naive)/true.value
+PE.snaive =  100*(true.value - pred.snaive)/true.value
+PE.rwf =  100*(true.value - pred.rwf)/true.value
+##
+MAPE.mv = mean(abs(PE.mv))
+MAPE.naive = mean(abs(PE.naive))
+MAPE.snaive = mean(abs(PE.snaive))
+MAPE.rwf = mean(abs(PE.rwf))
+##
+MAPE = c(MAPE.mv, MAPE.naive, MAPE.snaive, MAPE.rwf)
+## residual-based Error
+e.mv = true.value - pred.mv
+e.naive = true.value - pred.naive
+e.snaive = true.value - pred.snaive
+e.rwf = true.value - pred.rwf
+## MAD
+MAD.mv = sum(abs(e.mv))
+MAD.naive = sum(abs(e.naive))
+MAD.snaive = sum(abs(e.snaive))
+MAD.rwf = sum(abs(e.rwf))
+MAD = c(MAD.mv, MAD.naive, MAD.snaive, MAD.rwf)
+## MSE
+MSE.mv = mean((e.mv)^2)
+MSE.naive = mean((e.naive)^2)
+MSE.snaive = mean((e.snaive)^2)
+MSE.rwf = mean((e.rwf)^2)
+MSE = c(MSE.mv, MSE.naive, MSE.snaive, MSE.rwf)
+##
+accuracy.table = cbind(MAPE = MAPE, MAD = MAD, MSE = MSE)
+row.names(accuracy.table) = c("Moving Average", "Naive", "Seasonal Naive", "Drift")
+kable(accuracy.table, caption ="Overall performance of the four forecasting methods")
+```
+Based upon the model accuracy metrics, the drift forecasting method appears to be the best fit for time series modeling on this data.
+
+## Summary
+
+After performing the model diagnostics, we can conclude that the Drift model was most accurate in forecasting the future labor hours worked in the United States. The other methods of modeling show a stagnation in their forecast, but the drift model shows an increase annually which is reflective of the generally growing American Economy.
+
+
+
+
+
+
+
+
+
