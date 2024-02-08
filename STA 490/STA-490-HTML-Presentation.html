@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>STA 202 Presentation: Analysis of “Going For It” on Fourth Down in the 2022-2023 NFL Season</title>
+    <meta charset="utf-8" />
+    <meta name="author" content=" Jack Ross " />
+    <script src="STA-490-HTML-Presentation_files/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer01.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <font size = 7 color = "white">STA 202 Presentation: Analysis of “Going For It” on Fourth Down in the 2022-2023 NFL Season</font>
+]
+.subtitle[
+## <img src="img/logo_1.png" width=100 height=100><img src="img/RMarkdown-logo.png" width=90 height=100> <img src="img/xaringan-logo.png" width=90 height=100>
+]
+.author[
+### <font size = 5 color = "white"> Jack Ross </font>
+]
+.institute[
+### <font size = 6 color = "white">West Chester University of Pennsylvania</font><br>
+]
+.date[
+### <font color = "white" size =4> Prepared for<br> </font> <br> <font color = "gold" size = 6> STA490: Statistics Capstone </font> <br> <br> <font color = "white" size = 3> Slides available at: <a href="https://your-RPubs-url" class="uri">https://your-RPubs-url</a> AND <a href="https://your-GitHub-url" class="uri">https://your-GitHub-url</a></font>
+]
+
+---
+
+
+
+
+
+
+class:inverse4, top
+
+&lt;h1 align="center"&gt; Table of Contents &lt;/h1&gt;
+&lt;BR&gt;
+
+.pull-left[
+- Research Question
+  
+- Background Information
+
+- Exploratory Data Analysis
+ 
+- Statistical Techniques
+
+]
+
+.pull-right[
+- Results
+
+- Conclusions
+
+- Challenges and Future Work
+
+]
+
+
+
+
+
+---
+
+&lt;h1 align = "center"&gt;Reseach Question&lt;/h1&gt;
+&lt;BR&gt;
+
+.pull-left[
+
+&lt;li&gt; What is the strategical advantage of attempting an offensive play on fourth down to attempt to gain a first down?
+
+- To answer this question I researched
+
+&lt;li&gt; What percentage of fourth downs were not punts or field goals in the 2022 NFL season?
+&lt;li&gt; Who were the top 10 most effective teams in terms of "going for it" on fourth down last year?
+&lt;li&gt; What was the average distance to go for a first down on all offensive fourth down plays last year?
+&lt;li&gt; What was the frequency of "going for it" on fourth down relative to each quarter of the game?
+&lt;li&gt; What was the team total success rate on attempted fourth down plays last season? 
+
+]
+
+
+---
+name: Background
+
+&lt;h1 align="center"&gt; Background Information on National Football League&lt;/h1&gt;
+&lt;br&gt;
+
+.pull-left[
+
+
+.pull-right[
+
+
+]
+
+
+
+---
+name: Data
+
+
+&lt;h1 align="center"&gt; Exploratory Data Analysis and Data Set &lt;/h1&gt;
+&lt;br&gt;&lt;br&gt;
+
+
+
+
+---
+name: StatisticalTechniques
+
+&lt;h1 align="center"&gt; Statistical Tecniques Used in Analysis &lt;/h1&gt;
+
+
+
+---
+name: Results
+
+&lt;h1 align="center"&gt; Results From Analysis &lt;/h1&gt;
+
+
+
+
+
+---
+name: ChallengesFutureWork
+
+&lt;h1 align="center"&gt; Challenges and Future Work &lt;/h1&gt;
+
+
+
+---
+class: center, middle
+
+# Thanks!
+
+Slides created via the R packages:
+
+[**xaringan**](https://github.com/yihui/xaringan)&lt;br&gt;
+[gadenbuie/xaringanthemer](https://github.com/gadenbuie/xaringanthemer)
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
