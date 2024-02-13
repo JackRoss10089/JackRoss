@@ -1,9 +1,9 @@
 ---
-title: '<font size = 7 color = "white">STA 321 Presentation</font>'
-subtitle: '<img src="img/logo_1.png" width=100 height=100><img src="img/RMarkdown-logo.png" width=90 height=100> <img src="img/xaringan-logo.png" width=90 height=100>'
-author: '<font size = 5 color = "white"> Jack Ross </font>'
-institute: '<font size = 6 color = "white">West Chester University of Pennsylvania</font><br> '
-date: ' <font color = "white" size =4> Prepared for<br> </font> <br> <font color = "gold" size = 6> STA490: Statistics Capstone </font> <br> <br> <font color = "white" size = 3> Slides available at: https://your-RPubs-url AND https://your-GitHub-url</font>'
+title: '<font size = 7 color = "black">STA 202 NFL 2022-2023 Season Fourth Down Analysis</font>'
+subtitle: '<img src="img/nfllogo.jpeg" width=100 height=100><img src="img/RMarkdown-logo.png" width=90 height=100> <img src="img/xaringan-logo.png" width=90 height=100>'
+author: '<font size = 5 color = "black"> Jack Ross </font>'
+institute: '<font size = 6 color = "black">West Chester University of Pennsylvania</font><br> '
+date: ' <font color = "black" size =4> Prepared for<br> </font> <br> <font color = "gold" size = 6> STA490: Statistics Capstone </font> <br> <br> <font color = "white" size = 3> Slides available at: https://rpubs.com/JackRoss AND https://jackross10089.github.io/JackRoss/</font>'
 output:
   xaringan::moon_reader:
     css: xaringan-themer01.css
@@ -14,7 +14,6 @@ output:
       ratio: 16:9
       countIncrementalSlides: true
 ---
-
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
@@ -34,6 +33,10 @@ if (!require("ggplot2")) {
    install.packages("ggplot2")
    library(ggplot2)
 }
+if (!require("xaringanthemer")) {
+   install.packages("xaringanthemer")
+   library(xaringanthemer)
+}
 knitr::opts_chunk$set(
                   fig.width=3, 
                   fig.height=3, 
@@ -50,510 +53,208 @@ knitr::opts_chunk$set(
 
 class:inverse4, top
 
-<h1 align="center"> Table of Contents</h1>
+<h1 align="center"> Table of Contents </h1>
 <BR>
 
 .pull-left[
-- What is **xaringan** presentation?
-   - Demos of **xaringanthemer** presentation
-   - Installation and configurations
-   - CSS and modifications
-- Basic syntax and formatting
-   - Markup languages
-   - Highlighting and formatting
-   - List types
-- Coloring and color matching
-   - Text coloring
-   - Slide background coloring
-   - RGB and HEX color mixing 
-- Matching R plot and slide background
-   - Customizing background color
-   - choosing appropriate colors for plots
+- Research Question
+  
+- Background Information
+
+- Exploratory Data Analysis
+ 
+- Statistical Techniques
+
+- Results
+
+- Conclusions
+
+- Challenges and Future Work
 ]
 
-.pull-right[
-- Aesthetics of plots and tables
-   - Managing graphical features
-      - Sizes of title
-      - sizes of labels and tick marks
-      - dimension of plot through chunk option
-   - Static text tables
-   - Interactive data tables
-- Interactive plots
-- Embedding web pages and PDF files
-   - Opened interactive apps
-   - Opened PDF file
-   - including regular webpages
-- Embedding images
-   - static and animated images
-   - controlling size of images
-]
-
+<div style="text-align: right;">
+  <img src="img/nfllogo.jpeg" width=150 height=100;">
+</div>
 
 
 
 
 ---
 
-<h1 align = "center">What is <font color="orange">xaringanthemer</font>?</h1>
+<h1 align = "center">Reseach Question</h1>
 <BR>
 
-![xaringan-demo](img/xaringanThemeR.gif)
+.pull-left[
 
+<li> What is the strategical advantage of attempting an offensive play on fourth down to attempt to gain a first down?
 
+- To answer this question I researched
 
+- What percentage of fourth downs were not punts or field goals in the 2022 NFL season?
+
+- Who were the top 10 most effective teams in terms of "going for it" on fourth down last year?
+
+- What was the average distance to go for a first down on all offensive fourth down plays last year?
+
+- What was the frequency of "going for it" on fourth down relative to each quarter of the game?
+
+- What was the team total success rate on attempted fourth down plays last season? 
+
+]
 
 ---
-name: xaringanthemer
+name: Background
 
-<h1 align="center"> Getting Started with <font color="orange">xaringanthemer</font></h1>
+<h1 align="center"> Background Information on National Football League</h1>
 <br>
 
 .pull-left[
-#### Install *xaringanthemer*  
 
-<li> Place the following code to the setup code chunk of any RMD, or
-<li> install the package manually.
+Football can be viewed as a game of possessions; each possession can only be continued if the possessing team gains ten or more yards within a four-play sequence
 
-
-```{}
- if (!require("xaringanthemer")) {
-      install.packages("xaringanthemer")
-      library(xaringanthemer)
-     }
-```
-
-<li> Open a new RMD document.
-<li> Select `from Template` (see the figure on the right panel).
-<li> select or created a folder to store related files automatically generated from  *xaringanthemer*.
+Each one of these plays is a ”down”
 ]
 
-.pull-right[
-#### Open Default **xaringanthemer** 
 
-<img src="img/xanganthemr-template.jpg" width=450 height=400>
+.pull-right[
+
+Teams often face a decision of what to do on fourth down, as this down can result in a loss of possession if the possessing team does not get a first down
 
 ]
 
 
 
 ---
-name: configurations
+name: Data
 
 
-<h1 align="center"> Some Configurations of <font color="orange">xaringanthemer</font></h1>
+<h1 align="center"> Exploratory Data Analysis and Data Set </h1>
 <br><br>
 
+DATA SET
+
+<li> The NFL Plays data set contains 50,147 observations and 372 total variables for all the plays that were ran during the 2022-2023 NFL Regular and Post Season
+
+<li> The key variables I used for my analysis were down, rush.att, pass.att, posteam, ydstogo, yards_gained, qtr and play_type
+
+<li> By using these variables, I was able to collect more informational about the situational aspect of each one of the fourth down plays being considered from the data set
+
+EXPLORATORY DATA ANALYSIS
+
+- A “dummy variable” was created as a new variable in the data set. This variable was created by imposing a condition that made the outcome of the fourth down play either a zero or a one. A one indicates more yards were gained than the number of yards needed for a first down, a zero means not enough yards were gained for a first down.
+
+- The data set was filtered to only contain fourth down plays where a field goal,  punt, quarterback kneel, or no play did not occur for most of my analysis
+
+- After filtering the data set to include the specified observations, I found the mean of the ydstogo variable to answer one of the research questions
+---
+<h1 align="center"> Exploratory Data Analysis and Data Set Continued </h1>
+<br><br>
+- The data set was also subset into  Q1, Q2, Q3, and Q4 data sets, each one containing plays only from the first, second, third, or fourth quarter 
+- The variable ydstogo is very right skewed
+- This suggests that teams rarely go for it on fourth down when the distance is more than about five yards
+
 <center>
-<img src="img/xaringan-config.gif" width=1000 height=300>
+<img src="img/STA202VarSkewFinalProj.png" width=300 height=250>
 </center>
 
-
 ---
-name:css
+name: StatisticalTechniques
 
-<h1 align="center"> A Key Component of <font color="orange">xaringanthemer</font>: CSS</h1>
-<br>
-<center>Default CSS gengerated from 'xaringanthemer'</center>
-<center><div class='wrap'>
-<iframe src="https://pengdsci.github.io/ninja/xaringan-themer.css" height="400" width="800" title="Iframe Example"></iframe>
-</div></center>
-
-
----
-name:css1
-
-<h1 align="center"> A Key Component of <font color="orange">xaringanthemer</font>: CSS</h1>
-<br>
-<center><font color = "darkred"> Modified CSS from the 'xaringanthemer' generated style file</font></center>
-<center><div class='wrap'>
-<iframe src="https://pengdsci.github.io/ninja/xaringan-themer01.css" height="400" width="800" title="Iframe Example"></iframe>
-</div></center>
-
-
-
----
-
-### Markup Languages
-
-- **HTML** (Hypertext markup language): the front-end markup language for web page development.
-- **CSS** (Cascading style sheets): a markup language describing the layout of web page (HTML).
-- **Markdown**: a markup language for formatting documents.
-- **RMarkdown**: an R implementation of Markdown.
-- **LaTex**: a markup language for preparing documents.
-
-
-### Highlighting & Decorating
-
-
-|  Effect   |   Markdown    |              HTML   |      LaTex           |
-|:----------:|:------------:|:-------------------:|:--------------------:|
-| **bold**  |  `**bold**`   |     `<b>bold</b>`   |  `\textbf{bold}`     |
-| _italic_  |  `_italic_`   |    `<i>italic</i>`  |  `\textit{italic}`   |
-|~~strikethrough~~| `~~strikethrough~~`| `<s>strikethrough</s>` | `\cancel{strikethrough}`|
-
-
-
----
-name: two-col
-
-# Two Column Layout
-
-.pull-left[
-#### Unordered list:
-
-**Inputs**
-
-`*   Item foo`<br>
-`*   Item bar`<br>
-`*   Item baz`<br>
-`*   Item zip`
-
-
-**Outputs**
-
-*   Item foo
-*   Item bar
-*   Item baz
-*   Item zip
-]
-
-.pull-right[
-
-#### Ordered list:
-
-**Inputs**
-
-`1.  Item one`<br>
-`1.  Item two`<br>
-`1.  Item three`<br>
-`1.  Item four`
-
-**Outputs**
-
-1.  Item one
-1.  Item two
-1.  Item three
-1.  Item four
-
-]
-
-
-
----
-name:order-list
-
-# Nested Ordered and Un-ordered Lists
-
-.pull-left[
-
-**Input**
-
-```
-- level 1 item (ul)  
-  1. level 2 item (ol)  
-  1. level 2 item (ol)  
-    - level 3 item (ul)  
-    - level 3 item (ul)  
-- level 1 item (ul)  
-  1. level 2 item (ol)  
-  1. level 2 item (ol)  
-    - level 3 item (ul)  
-    - level 3 item (ul)  
-  1. level 4 item (ol)  
-  1. level 4 item (ol)  
-    - level 3 item (ul)  
-    - level 3 item (ul)  
-- level 1 item (ul)
-```
-]
-
-.pull-right[
-
-**Output**
-
-- level 1 item (ul)  
-  1. level 2 item (ol)  
-  1. level 2 item (ol)  
-     - level 3 item (ul)  
-     - level 3 item (ul)  
-- level 1 item (ul)  
-  1. level 2 item (ol)  
-  1. level 2 item (ol)  
-     - level 3 item (ul)  
-     - level 3 item (ul)  
-  1. level 4 item (ol)  
-  1. level 4 item (ol)  
-     - level 3 item (ul)  
-     - level 3 item (ul)  
-- level 1 item (ul)
-]
-
-
-
-
-
----
-name: colors-headers
-
-
-### Formatting 
-
-`---`: starting a new slide.
-
-`name: name-of-the-slide`: must be placed immediately underneath the slide separator "`---`".
-
-`[link text](slide-name)`: referencing a specific slide in the deck.
-
- `#, ##, ###`: representing level 1, 2, and 3 headers respectively. 
- 
- `<h1></h1>, <h2></h2>, <h3></h3>`: HTML version of header levels (equivalent to `#, ##, ###`).
- 
- 
-
-### Coloring 
-
-Coloring text through HTML tag or CSS style.
-
-|  colored text     |     HTML tag       |      CSS style        |
-|:-----------------:|:------------------:|:---------------------:|     
-| <font color="red">red</font>  |`<font color="red">red</font>`| `<font style="color:red">red</font>`|
-| <font color="#800080">purple</font>  |`<font color="#800080">purple</font>`| `<font style="color:#800080">purple</font>`|
-
-
----
-name: colors
-
-<h1 align="center"> Making Custom Colors</font></h1>
-
-<center><div class='wrap'>
-<iframe src="https://colordesigner.io/color-mixer" height="500px" width="100%" style="border:1px solid black;"></iframe>
-</div></center>
-
-
----
-class: inverse center middle
-
-# Colored Background in R Plot
-
-
----
-class: inverse1 center middle 
-
-
-## Matching Plot Background Color
-
-```{r echo=FALSE, fig.align='center', out.width = '600px'}
-par(bg = '#70384A', col.axis="white")
-xnorm = rnorm(100,5, 5)
-hist(xnorm, xlab="", main="Histogram of normal distribution", 
-     cex.main=0.8, 
-     cex.lab=0.8,
-     col.axis = "white",
-     col.main = "white",
-     col.lab = "white",
-     col.sub="white",
-     col.tick="white",
-     col = '#70384A', 
-     border = "white")
-axis(2,col="white")
-axis(1,col="white")
-```
-
-
----
-class: inverse2 center middle 
-
-
-## Matching Plot Background Color
-
-```{r echo=FALSE, fig.align='center', out.width = '550px'}
-par(bg = '#D47F31', col.axis="white")
-xnorm = rnorm(100,5, 5)
-ynorm = rnorm(100,5, 5)
-
-plot(NULL,
-     xlab="x label",
-     ylab="y label",
-     xlim=range(xnorm),
-     ylim=range(ynorm),
-     main="Scatter Plot", 
-     cex.main=0.8, 
-     cex.lab=0.6,
-     col.main = "white",
-     col.lab = "white",
-     col.sub="white",
-     col.tick="white",
-     col = 'white',
-     col.box="white"
-     )
-points(xnorm, ynorm, col="white", cex=0.5, pch=19)
-axis(2,col="white")
-axis(1,col="white")
-box(col = 'white')
-```
-
-
-
----
-class: inverse1 center top
-
-<h1 align="center"> Mathematical Formulas</h1>
-
-
-<h3 align="left"> Normal density function</h3>
-
-$$
-f(x)=\frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{(x-\mu)^2}{2\sigma^2}}
-$$
+<h1 align="center"> Statistical Tecniques Used in Analysis </h1>
 
 <h3 align = "left">Logistic Model</h3>
+
+-Logistic regression was used to predict the contribution to the likelihood of a successful fourth down play from variables that were viewed as practically significant to the outcome of a fourth down play
+
 
 $$
 P(x|Y=1) = \frac{\exp(\beta_0+\beta_1x_1+\cdots+\beta_kx_k)}{1+\exp(\beta_0+\beta_1x_1+\cdots+\beta_kx_k)}
 $$
 
-<h3 align="left"> Inline equations</h3>
+- Mean and standard deviation were used to analyze the ydstogo variable  
 
-An example of inline equation $y=\beta_0+\beta_1x_1+\cdots+\beta_kx_k+\epsilon$, where $\epsilon \sim N(0, \sigma^2)$.
-
-
+- Simple proportions were created within the R code used to analyze team’s success rates on fourth down
 
 ---
-class: inverse1 center middle 
+name: Results
 
-# Text Format Data Table
+<h1 align="center"> Results From Analysis </h1>
 
-```{r echo=FALSE, comment=NA}
-tibble::as_tibble(mtcars)
-```
-
-
----
-class: inverse3 center middle 
-
-# Interactive Data Table
-
-```{r  echo=FALSE}
-DT::datatable(head(mtcars), fillContainer = FALSE, options = list(pageLength = 4))
-```
-
-
----
-name: rplot
-
-# R Generated Plot
-
-```{r plot-example, fig.align='center', out.height="40%", out.width="40%"}
-library(ggplot2)
-(g <- ggplot(mpg) + aes(hwy, cty, color = class) + geom_point())
-```
-
-
-
----
-name:interactive-plot
-
-<h1 align = "center">Interactive and Animated Graphs</h1>
-
-
-.pull-left[
-
-```
-# define three densities
-sepal.len.setosa <- iris[which(iris$Species == "setosa"),]
-setosa <- density(sepal.len.setosa$Sepal.Length)
-sepal.len.versicolor <- iris[which(iris$Species == "versicolor"),]
-versicolor <- density(sepal.len.versicolor$Sepal.Length)
-sepal.len.virginica <- iris[which(iris$Species == "virginica"),]
-virginica <- density(sepal.len.virginica$Sepal.Length)
-# plot density curves
-fig <- plot_ly(x = ~virginica$x, y = ~virginica$y, 
-               type = 'scatter', mode = 'lines', 
-               name = 'virginica', 
-               fill = 'tozeroy')  %>% 
-           # adding more density curves
-       add_trace(x = ~versicolor$x, y = ~versicolor$y, 
-                 name = 'versicolor', fill = 'tozeroy')  %>% 
-       add_trace(x = ~setosa$x, y = ~setosa$y, 
-                 name = 'setosa', fill = 'tozeroy')  %>%   
-       layout(xaxis = list(title = 'Sepal Length'),
-              yaxis = list(title = 'Density'))
-fig
-```
-]
-
-
-.pull-right[
-
-<BR><BR><BR>
-```{r echo=FALSE, out.width="80%", fig.align='right'}
-# define three densities
-sepal.len.setosa <- iris[which(iris$Species == "setosa"),]
-setosa <- density(sepal.len.setosa$Sepal.Length)
-sepal.len.versicolor <- iris[which(iris$Species == "versicolor"),]
-versicolor <- density(sepal.len.versicolor$Sepal.Length)
-sepal.len.virginica <- iris[which(iris$Species == "virginica"),]
-virginica <- density(sepal.len.virginica$Sepal.Length)
-# plot density curves
-fig <- plot_ly(x = ~virginica$x, y = ~virginica$y, 
-               type = 'scatter', mode = 'lines', 
-               name = 'virginica', 
-               fill = 'tozeroy')  %>% 
-           # adding more density curves
-       add_trace(x = ~versicolor$x, y = ~versicolor$y, 
-                 name = 'versicolor', fill = 'tozeroy')  %>% 
-       add_trace(x = ~setosa$x, y = ~setosa$y, 
-                 name = 'setosa', fill = 'tozeroy')  %>%   
-       layout(xaxis = list(title = 'Sepal Length'),
-              yaxis = list(title = 'Density'))
-fig
-```
-]
-
-
-
----
-name:animated-image
-
-<h1 align="center">Including Animated Graphs </h1>
-<BR><BR>
-
-
-.pull-left[
+What percentage of fourth downs were not punts or field goals in the 2022 NFL season?
 <center>
- <img src="img/impossible-parking.gif" width=300 height=200>
+<img src="img/STA202NotPuntFGTable.png" width=1000 height=150>
 </center>
-]
 
-.pull-right[
+What was the average distance to go for a first down on all offensive fourth down plays last year?
 <center>
-<img src="img/perfect-parking.gif"  width=400 height=200>
+<img src="img/STA202AvgDistTable.png" width=450 height=150>
 </center>
-]
-
----
-name:embeddingPDF
-
-<h1 align="center">Embedding Opened PDF Files</h1>
-
-<center><div class='wrap'>
-<object data="https://pengdsci.github.io/sta553/w03-Ethics.pdf" type="application/pdf" width="80%" height="500px">
-      <p>Unable to display PDF file. <a href="https://pengdsci.github.io/sta553/w03-Ethics.pdf">Download</a> instead.</p>
-    </object>
-</div></center>
-
 
 
 ---
-name:embedding
+name: Results Continued
 
-<h1 align="center">Embedding Opened Interactive Apps</h1>
+<h1 align="center"> Results From Analysis </h1>
 
-<center><div class='wrap'>
-<iframe src="https://wcu-peng.shinyapps.io/NormalCI4MeanProp/" height="500" width="1110" title="Iframe Example"></iframe>
-</div></center>
+Frequency of rush and pass attempts on fourth down
+<center>
+<img src="img/STA202PassRunTable.png" width=500 height=500>
+</center>
+---
+name: Results Continued
 
+<h1 align="center"> Results From Analysis </h1>
+
+Who were the top 10 most effective teams in terms of "going for it" on fourth down last year?
+What was the team total success rate on attempted fourth down plays last season? 
+
+<center>
+<img src="img/STA202SuccessTable.png" width=500 height=500>
+</center>
+
+---
+name: Results Continued
+
+<h1 align="center"> Results From Analysis </h1>
+
+What was the frequency of "going for it" on fourth down relative to each quarter of the game?
+<center>
+<img src="img/STA202FreqTable.png" width=1000 height=150>
+</center>
+
+Logistic Regression Model Results
+<center>
+<img src="img/STA202LogModelTable.png" width=400 height=250>
+</center>
+
+---
+name: Conclusions
+
+<h1 align="center"> Conclusions </h1>
+
+- The strategical advantage when going for it on fourth down is strongest when a team can confidently run the ball given the distance required for a first down
+
+- Passing the ball on fourth down is substantially less effective than running the ball on fourth down
+
+- This is a function of yards needed for a first down, as the lesser yards need for a possessing team to get a first down intuitively increases the likelihood of the first down being converted successfully
+
+- The lesser yards needed also increases the chance of a running play, and this explains some of the inflated potency of running the ball on fourth down
+
+- It is also important to note the intangible aspects of coaching a football game such as experience and overall situational awareness, this is best demonstrated by the Chiefs and the Rams having the highest fourth down success rates last year, as Andy Reid and Sean McVay are considered as two of the best coaches in the NFL
+
+
+---
+name: ChallengesFutureWork
+
+<h1 align="center"> Challenges and Future Work </h1>
+
+- One of the biggest challenges was effectively visualizing the output that was generated from the analysis
+
+- Also, it was challenging at first to understand how to classify a successful fourth down within the data set
+
+- In the future, I would like to further understand some of the dependent modeling techniques that can be used to better consider all the situational factors that build into a fourth down decision
+
+- Also, it would be interesting to conduct the same analysis at the end of this current season with the data from this season to compare to last season
 
 ---
 class: center, middle
@@ -565,4 +266,4 @@ Slides created via the R packages:
 [**xaringan**](https://github.com/yihui/xaringan)<br>
 [gadenbuie/xaringanthemer](https://github.com/gadenbuie/xaringanthemer)
 
-The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
+
