@@ -1,0 +1,264 @@
+---
+title: "Time Series Analysis of Electric Production in NSW Australia"
+author: "Jack Ross"
+date: '2023-05-10'
+output: html_document
+---
+
+```{=html}
+
+<style type="text/css">
+
+/* Cascading Style Sheets (CSS) is a stylesheet language used to describe the presentation of a document written in HTML or XML. it is a simple mechanism for adding style (e.g., fonts, colors, spacing) to Web documents. */
+
+h1.title {  /* Title - font specifications of the report title */
+  font-size: 24px;
+  color: DarkRed;
+  text-align: center;
+  font-family: "Gill Sans", sans-serif;
+}
+h4.author { /* Header 4 - font specifications for authors  */
+  font-size: 20px;
+  font-family: system-ui;
+  color: DarkRed;
+  text-align: center;
+}
+h4.date { /* Header 4 - font specifications for the date  */
+  font-size: 18px;
+  font-family: system-ui;
+  color: DarkBlue;
+  text-align: center;
+}
+h1 { /* Header 1 - font specifications for level 1 section title  */
+    font-size: 22px;
+    font-family: "Times New Roman", Times, serif;
+    color: navy;
+    text-align: center;
+}
+h2 { /* Header 2 - font specifications for level 2 section title */
+    font-size: 20px;
+    font-family: "Times New Roman", Times, serif;
+    color: navy;
+    text-align: left;
+}
+
+h3 { /* Header 3 - font specifications of level 3 section title  */
+    font-size: 18px;
+    font-family: "Times New Roman", Times, serif;
+    color: navy;
+    text-align: left;
+}
+
+h4 { /* Header 4 - font specifications of level 4 section title  */
+    font-size: 18px;
+    font-family: "Times New Roman", Times, serif;
+    color: darkred;
+    text-align: left;
+}
+
+body { background-color:white; }
+
+.highlightme { background-color:yellow; }
+
+p { background-color:white; }
+
+</style>
+```
+
+```{r setup, include=FALSE}
+# Detect, install and load packages if needed.
+if (!require("knitr")) {
+   install.packages("knitr")
+   library(knitr)
+}
+if (!require("leaflet")) {
+   install.packages("leaflet")
+   library(leaflet)
+}
+if (!require("EnvStats")) {
+   install.packages("EnvStats")
+   library(EnvStats)
+}
+if (!require("MASS")) {
+   install.packages("MASS")
+   library(MASS)
+}
+if (!require("phytools")) {
+   install.packages("phytools")
+   library(phytools)
+}
+if (!require("pander")) {
+   install.packages("pander")
+   library(pander)
+}
+if (!require("lubridate")) {
+   install.packages("lubridate")
+   library(lubridate)
+}
+if (!require("dplyr")) {
+   install.packages("dplyr")
+   library(dplyr)
+}
+if (!require("psych")) {
+   install.packages("psych")
+   library(psych)
+}
+if (!require("arules")) {
+   install.packages("arules")
+   library(arules)
+}
+if (!require("ISwR")) {
+   install.packages("ISwR")
+   library(ISwR)
+}
+if (!require("readxl")) {
+   install.packages("readxl")
+   library(ISwR)
+}
+if (!require("forecast")) {
+   install.packages("forecast")
+   library(ISwR)
+}
+#
+# specifications of outputs of code in code chunks
+knitr::opts_chunk$set(echo = FALSE,      # include code chunk in the output file
+                      warnings = FALSE,  # sometimes, you code may produce warning messages,
+                                         # you can choose to include the warning messages in
+                                         # the output file. 
+                      messages = FALSE,  #
+                      results = TRUE     # you can also decide whether to include the output
+                                         # in the output file.
+                      )  
+
+
+## Add ECHO = TRUE for submission and ECHO = FALSE for submission
+```
+
+## Introduction
+
+This case study examines a time series data set that tracks the monthly electric production in kilowatt-hours (kWh) from January 1973 to December 2010 for the state of New South Wales, Australia. The data set contains 456 observations. This data set was retrieved from kaggle and uploaded to github. The data is available through the following link: https://raw.githubusercontent.com/JackRoss10089/STA-321/main/Electric_Production.csv. The goal of this case study is to decompose this time series data to observe seasonality and other trends within the data. Also, we aim find the ideal sample size for our training data set.
+
+## Exploratory Data Analysis
+
+After retrieving the data from github, we must next prepare the data set for analysis. First we must reduce the data set to the 150 most recent observations. Then we remove the date variable from the data set as we do not need it to utilize the ts function. We next define a time series object for this data set using a frequency of 12 because this data is for monthly observations. 
+
+```{r}
+#Load data from github
+Electric <- read.csv("https://raw.githubusercontent.com/JackRoss10089/STA-321/main/Electric_Production.csv", header = TRUE)[-1]
+
+#Use tail function to extract 200 most recent observations from data set
+Electric0 <- tail(Electric, 150)
+
+#Time series object and graph
+Electric.ts = ts(Electric0, frequency = 12, start = c(2005, 1))
+par(mar=c(3,3,3,3))
+plot(Electric.ts, main="New South Wales Electric Production From August 2005 to January 2018", ylab="Production in Kilowatt-Hours", xlab="Year")
+```
+
+## Forecasting with Decomposing
+
+Next we will use a classical decomposition method and a STL decomposition method to perform forecasts on this additive time series.
+
+```{r}
+#Classic decomposition method
+cls.decomp = decompose(Electric.ts)
+par(mar=c(2,2,2,2))
+plot(cls.decomp, xlab="")
+```
+
+```{r}
+#STL decomposition method
+stl.decomp=stl(Electric.ts[,1], s.window = 12)
+par(mar=c(2,2,2,2))
+plot(stl.decomp)
+```
+
+After performing the classical decomposition and the STL decomposition, we can see that there is distinct seasonality in this data set. There is also a slight positive trend with this data as well. This suggests that energy production has been slowly increasing and the amount of energy produced varies from season to season throughout the year.
+
+## Training and Testing Data
+
+Next we will partition the data into a training and testing data set in order to perform forecasting methods on this data. We will use the last 7 periods of data for testing, and the rest of the historical data will be used to train the forecasting model.
+
+```{r}
+#Define new data set from existing data
+n.row = dim(Electric)[1]
+data.Electric = Electric[(n.row-150):n.row, ]
+
+ini.data = data.Electric
+n0 = length(ini.data)
+##
+train.data01 = data.Electric[1:(n0-7)]
+train.data02 = data.Electric[37:(n0-7)]
+train.data03 = data.Electric[73:(n0-7)]
+train.data04 = data.Electric[97:(n0-7)]
+## last 7 observations
+test.data = data.Electric[(n0-6):n0]
+##
+train01.ts = ts(train.data01, frequency = 12, start = c(2008, 1))
+train02.ts = ts(train.data02, frequency = 12, start = c(2011, 1))
+train03.ts = ts(train.data03, frequency = 12, start = c(2014, 1))
+train04.ts = ts(train.data04, frequency = 12, start = c(2016, 1))
+##
+stl01 = stl(train01.ts, s.window = 12)
+stl02 = stl(train02.ts, s.window = 12)
+stl03 = stl(train03.ts, s.window = 12)
+stl04 = stl(train04.ts, s.window = 12)
+## Forecast with decomposing
+fcst01 = forecast(stl01,h=7, method="naive")
+fcst02 = forecast(stl02,h=7, method="naive")
+fcst03 = forecast(stl03,h=7, method="naive")
+fcst04 = forecast(stl04,h=7, method="naive")
+```
+
+We next perform error analysis.
+
+```{r}
+## To compare different errors, we will not use the percentage for MAPE
+PE01=(test.data-fcst01$mean)/fcst01$mean
+PE02=(test.data-fcst02$mean)/fcst02$mean
+PE03=(test.data-fcst03$mean)/fcst03$mean
+PE04=(test.data-fcst04$mean)/fcst04$mean
+###
+MAPE1 = mean(abs(PE01))
+MAPE2 = mean(abs(PE02))
+MAPE3 = mean(abs(PE03))
+MAPE4 = mean(abs(PE04))
+###
+E1=test.data-fcst01$mean
+E2=test.data-fcst02$mean
+E3=test.data-fcst03$mean
+E4=test.data-fcst04$mean
+##
+MSE1=mean(E1^2)
+MSE2=mean(E2^2)
+MSE3=mean(E3^2)
+MSE4=mean(E4^2)
+###
+MSE=c(MSE1, MSE2, MSE3, MSE4)
+MAPE=c(MAPE1, MAPE2, MAPE3, MAPE4)
+accuracy=cbind(MSE=MSE, MAPE=MAPE)
+row.names(accuracy)=c("n.144", "n.109", "n. 73", "n. 48")
+kable(accuracy, caption="Error comparison between forecast results with different sample sizes")
+```
+We next create a visualization for the change in error based upon testing and training data set size.
+
+```{r}
+plot(1:4, MSE, type="b", col="darkred", ylab="Error", xlab="",
+     ylim=c(0,30),xlim = c(0,4.5), main="Error Curves", axes=FALSE)
+labs=c("n=144", "n=109", "n=73", "n=48")
+axis(1, at=1:4, label=labs, pos=0)
+axis(2)
+lines(1:4, MAPE, type="b", col="blue")
+text(1:4, MAPE+0.03, as.character(round(MAPE,4)), col="blue", cex=0.7)
+text(1:4, MSE-0.03, as.character(round(MSE,4)), col="darkred", cex=0.7)
+legend("topleft", c("MSE", "MAPE"), col=c("darkred","blue"), lty=1, bty="n", cex=0.7)
+```
+
+Based upon the error curve, the best training data set size to use when n = 109. THis value reports the least MAPE value and the secind least MSE value, suggesting this training data set size will yield the best performance. 
+
+
+
+
+
+
+
